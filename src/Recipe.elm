@@ -1,22 +1,16 @@
-module Recipe exposing (Recipe, Preparation, Ingredient, IngredientGroup, IngredientList)
+module Recipe exposing (Recipe, Ingredients, Preparation)
+
+type alias ListGroup = 
+    { title: String
+    , list: List String
+    }
+
+type alias Preparation = ListGroup
+
+type Ingredients = List ListGroup
 
 type alias Recipe =
-    { ingredients: IngredientList
+    { title: String
+    , ingredients: Ingredients
     , preparation: Preparation
     }
-
-type alias Preparation =
-    List String
-
-type alias Ingredient = 
-    { amount: String
-    , name: String
-    }
-
-type alias IngredientGroup =
-    { ingredients: List Ingredient
-    , title: String
-    }
-
-type alias IngredientList =
-    List IngredientGroup

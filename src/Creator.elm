@@ -4,19 +4,24 @@ import Browser exposing (Document)
 import Html exposing (Html, button, div, input, p, text)
 import Html.Attributes exposing (placeholder, type_, value)
 import Html.Events exposing (onClick, onInput)
+import Recipe exposing (Preparation)
+import Html exposing (fieldset)
+import Html exposing (legend)
 
 -- TODO: Convert "input" to "preparation" and add another set of input fields for "ingredients"
 -- Types
 
 
 type alias Model =
-    { input : List String }
+    { preparation : Preparation
+    , title : String
+    }
 
 
 type Msg
-    = GotInput Int String
-    | AddInput
-    | RemoveInput
+    = GotPreparationInput Int String
+    | AddPreparationField
+    | RemovePreparationField
 
 
 
@@ -35,41 +40,47 @@ subscriptions _ =
 update : Msg -> Model -> ( Model, Cmd msg )
 update msg model =
     case msg of
-        GotInput index input ->
-            ( { model | input = updateInputs index input model }, Cmd.none )
+        GotPreparationInput index input ->
+            ( { model | preparation = updateInputs index input model.preparation }, Cmd.none )
 
-        AddInput ->
-            ( { model | input = addInput model.input }, Cmd.none )
+        AddPreparationField ->
+            ( { model | preparation = addInput model.preparation }, Cmd.none )
 
-        RemoveInput ->
-            ( { model | input = removeInput model.input }, Cmd.none )
-
-
-addInput : List String -> List String
-addInput input =
-    List.append input (List.singleton "")
+        RemovePreparationField ->
+            ( { model | preparation = removeInput model.preparation }, Cmd.none )
 
 
-removeInput : List String -> List String
-removeInput input =
-    if List.length input > 1 then
-        List.take (List.length input - 1) input
+addInput : Preparation -> Preparation
+addInput preparation =
+    { preparation | list = List.append preparation.list (List.singleton "") }
+    
 
-    else
-        input
+removeInput : Preparation -> Preparation
+removeInput preparation =
+    { preparation | list = 
+        if List.length preparation.list > 1 then
+            List.take (List.length preparation.list - 1) preparation.list
+        else
+            preparation.list
+    }
 
 
-updateInputs : Int -> String -> Model -> List String
-updateInputs index input model =
-    List.indexedMap
-        (\i el ->
-            if i == index then
-                input
-
-            else
-                el
-        )
-        model.input
+updateInputs : Int -> String -> Preparation -> Preparation
+updateInputs index input prep =
+    let
+        prepInput = 
+            List.indexedMap
+                (\i el ->
+                    if i == index then
+                        input
+                    else
+                        el
+                )
+                prep.list
+    in
+    { title = prep.title
+    , list = prepInput
+    }
 
 
 
@@ -81,23 +92,26 @@ view model =
     { title = "Recipe Creator"
     , body =
         [ div []
-            [ button [ onClick AddInput ] [ text "Add Input" ]
-            , button [ onClick RemoveInput ] [ text "Remove Input" ]
+            [ button [ onClick AddPreparationField ] [ text "Add Input" ]
+            , button [ onClick RemovePreparationField ] [ text "Remove Input" ]
             ]
-        , div [] <| createInputFields model.input
-        , div [] <| createOutputFields model.input
+        , div [] [ createInputFields model.preparation.list ]
+        , div [] <| createOutputFields model.preparation.list
         ]
     }
 
 
-createInputFields : List String -> List (Html Msg)
+createInputFields : List String -> Html Msg
 createInputFields currentInput =
-    List.indexedMap (\i el -> inputField i el) currentInput
-
+    let
+        inputFields = List.indexedMap (\i el -> inputField i el) currentInput
+        content = (legend [] [ text "Placeholder" ]) :: inputFields
+    in
+    fieldset [] content
 
 inputField : Int -> String -> Html Msg
 inputField position currValue =
-    input [ type_ "text", placeholder "Placeholder Text", value currValue, onInput (GotInput position) ] []
+    input [ type_ "text", placeholder "Placeholder Text", value currValue, onInput (GotPreparationInput position) ] []
 
 
 createOutputFields : List String -> List (Html msg)
@@ -113,11 +127,22 @@ outputField input =
 
 -- Main
 
+init : () -> (Model, Cmd msg)
+init _ =
+    (
+        { title = "Placeholder"
+        , preparation = 
+            { title = "Placeholder"
+            , list = []
+            } 
+        }
+    ,   Cmd.none
+    )
 
 main : Program () Model Msg
 main =
     Browser.document
-        { init = \_ -> ( { input = [ "" ] }, Cmd.none )
+        { init = init
         , view = view
         , update = update
         , subscriptions = subscriptions
