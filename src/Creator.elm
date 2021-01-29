@@ -1,17 +1,14 @@
 module Creator exposing (main)
 
 import Browser exposing (Document)
-import Html exposing (Html, button, div, input, p, text)
+import Html exposing (..)
 import Html.Attributes exposing (placeholder, type_, value)
 import Html.Events exposing (onClick, onInput)
-import Recipe exposing (Preparation)
-import Html exposing (fieldset)
-import Html exposing (legend)
+import Recipe exposing (..)
+import List
+import Browser exposing (document)
 
--- TODO: Convert "input" to "preparation" and add another set of input fields for "ingredients"
 -- Types
-
-
 type alias Model =
     { preparation : Preparation
     , title : String
@@ -19,124 +16,113 @@ type alias Model =
 
 
 type Msg
-    = GotPreparationInput Int String
-    | AddPreparationField
-    | RemovePreparationField
-
+    = GotPreparationInput Selector String
+    | AddPreparationField Int
+    | RemovePreparationField Int
+    | AddGroup
+    | RemoveGroup
 
 
 -- JavaScript Interop
-
-
 subscriptions : Model -> Sub Msg
 subscriptions _ =
     Sub.none
 
 
-
 -- Update
-
-
 update : Msg -> Model -> ( Model, Cmd msg )
 update msg model =
     case msg of
-        GotPreparationInput index input ->
-            ( { model | preparation = updateInputs index input model.preparation }, Cmd.none )
+        GotPreparationInput selector input ->
+            ( { model | preparation =  updateSection model.preparation input selector }, Cmd.none )
 
-        AddPreparationField ->
-            ( { model | preparation = addInput model.preparation }, Cmd.none )
+        AddPreparationField index ->
+            ( { model | preparation = addInput model.preparation { groupIndex = index, listIndex = -1 } "empty" }, Cmd.none )
 
-        RemovePreparationField ->
-            ( { model | preparation = removeInput model.preparation }, Cmd.none )
+        RemovePreparationField index ->
+            ( { model | preparation = removeInput model.preparation { groupIndex = index, listIndex = -1 } }, Cmd.none )
+        
+        AddGroup ->
+            ( { model | preparation = addGroup model.preparation ["New Group Placeholder"] }, Cmd.none )
 
-
-addInput : Preparation -> Preparation
-addInput preparation =
-    { preparation | list = List.append preparation.list (List.singleton "") }
-    
-
-removeInput : Preparation -> Preparation
-removeInput preparation =
-    { preparation | list = 
-        if List.length preparation.list > 1 then
-            List.take (List.length preparation.list - 1) preparation.list
-        else
-            preparation.list
-    }
-
-
-updateInputs : Int -> String -> Preparation -> Preparation
-updateInputs index input prep =
-    let
-        prepInput = 
-            List.indexedMap
-                (\i el ->
-                    if i == index then
-                        input
-                    else
-                        el
-                )
-                prep.list
-    in
-    { title = prep.title
-    , list = prepInput
-    }
-
+        RemoveGroup ->
+            ( { model | preparation = removeGroup model.preparation }, Cmd.none )
 
 
 -- View
 
-
+-- Throws INITIALISATION ERROR
+-- Error is located here.
 view : Model -> Document Msg
 view model =
     { title = "Recipe Creator"
     , body =
-        [ div []
-            [ button [ onClick AddPreparationField ] [ text "Add Input" ]
-            , button [ onClick RemovePreparationField ] [ text "Remove Input" ]
-            ]
-        , div [] [ createInputFields model.preparation.list ]
-        , div [] <| createOutputFields model.preparation.list
-        ]
+        [ createInputFields model.preparation ]
     }
 
-
-createInputFields : List String -> Html Msg
-createInputFields currentInput =
+createInputFields : Section -> Html Msg
+createInputFields section =
     let
-        inputFields = List.indexedMap (\i el -> inputField i el) currentInput
-        content = (legend [] [ text "Placeholder" ]) :: inputFields
+        buttons =
+                [ button [ onClick AddGroup ] [ text "Add a Group" ]
+                , button [ onClick RemoveGroup ] [ text "Remove a Group" ]
+                ]
+        groups =
+            List.indexedMap
+                (\groupIndex group ->
+                    createGroupInputs group groupIndex)
+                section
+
+        content =
+            (legend [] [ text "Section Placeholder" ]) :: groups
     in
-    fieldset [] content
+    fieldset []
+        [ div [] content
+        , div [] buttons
+        ]
 
-inputField : Int -> String -> Html Msg
-inputField position currValue =
-    input [ type_ "text", placeholder "Placeholder Text", value currValue, onInput (GotPreparationInput position) ] []
+-- its not the buttons
+createGroupInputs : Group -> Int -> Html Msg
+createGroupInputs group groupIndex =
+    let
+        buttons =
+                [ button [ onClick (AddPreparationField groupIndex) ] [ text "Add Input" ]
+                , button [ onClick (RemovePreparationField groupIndex) ] [ text "Remove Input" ]
+                ]
+        inputFields =
+            List.indexedMap (\listIndex el ->
+                inputField { groupIndex = groupIndex , listIndex = listIndex } el)
+                group.list
+        content = (legend [] [ text group.title ]) :: inputFields
+    in
+    fieldset [] 
+        [ div [] content
+        , div [] buttons
+        ]
 
-
-createOutputFields : List String -> List (Html msg)
-createOutputFields currentInputs =
-    List.map (\el -> outputField el) currentInputs
-
-
-outputField : String -> Html msg
-outputField input =
-    p [] [ text input ]
-
+inputField : Selector -> String -> Html Msg
+inputField selector currValue =
+    input [ type_ "text", placeholder "Placeholder Text", value currValue, onInput (GotPreparationInput selector) ] []
 
 
 -- Main
 
 init : () -> (Model, Cmd msg)
 init _ =
-    (
-        { title = "Placeholder"
-        , preparation = 
-            { title = "Placeholder"
-            , list = []
-            } 
-        }
-    ,   Cmd.none
+    let
+        prepGroup = 
+            { title = "Group Placeholder"
+            , list = ["First instruction goes here"]
+            }
+        prepSection =
+            [prepGroup]
+        model =
+            { preparation = prepSection
+            , title = "Placeholder Recipe Title"
+            }
+    in
+    ( model
+    , Cmd.none
     )
 
 main : Program () Model Msg

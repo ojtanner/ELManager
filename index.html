@@ -5161,12 +5161,15 @@ var $elm$browser$Browser$document = _Browser_document;
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
 var $author$project$Creator$init = function (_v0) {
-	return _Utils_Tuple2(
-		{
-			preparation: {list: _List_Nil, title: 'Placeholder'},
-			title: 'Placeholder'
-		},
-		$elm$core$Platform$Cmd$none);
+	var prepGroup = {
+		list: _List_fromArray(
+			['First instruction goes here']),
+		title: 'Group Placeholder'
+	};
+	var prepSection = _List_fromArray(
+		[prepGroup]);
+	var model = {preparation: prepSection, title: 'Placeholder Recipe Title'};
+	return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 };
 var $elm$core$Platform$Sub$batch = _Platform_batch;
 var $elm$core$Platform$Sub$none = $elm$core$Platform$Sub$batch(_List_Nil);
@@ -5185,15 +5188,49 @@ var $elm$core$List$singleton = function (value) {
 	return _List_fromArray(
 		[value]);
 };
-var $author$project$Creator$addInput = function (preparation) {
-	return _Utils_update(
-		preparation,
-		{
-			list: A2(
-				$elm$core$List$append,
-				preparation.list,
-				$elm$core$List$singleton(''))
-		});
+var $author$project$Recipe$addGroup = F2(
+	function (section, placeholder) {
+		return A2(
+			$elm$core$List$append,
+			section,
+			$elm$core$List$singleton(
+				{list: placeholder, title: 'None'}));
+	});
+var $author$project$Recipe$addGroupInput = F2(
+	function (group, placeholder) {
+		return _Utils_update(
+			group,
+			{
+				list: A2(
+					$elm$core$List$append,
+					group.list,
+					$elm$core$List$singleton(placeholder))
+			});
+	});
+var $author$project$Utils$targetMap = F3(
+	function (list, targetIndex, fun) {
+		return A2(
+			$elm$core$List$indexedMap,
+			F2(
+				function (index, el) {
+					return _Utils_eq(index, targetIndex) ? fun(el) : el;
+				}),
+			list);
+	});
+var $author$project$Recipe$addInput = F3(
+	function (section, _v0, placeholder) {
+		var groupIndex = _v0.groupIndex;
+		var listIndex = _v0.listIndex;
+		return A3(
+			$author$project$Utils$targetMap,
+			section,
+			groupIndex,
+			function (group) {
+				return A2($author$project$Recipe$addGroupInput, group, placeholder);
+			});
+	});
+var $elm$core$Basics$negate = function (n) {
+	return -n;
 };
 var $elm$core$List$takeReverse = F3(
 	function (n, list, kept) {
@@ -5321,46 +5358,115 @@ var $elm$core$List$take = F2(
 	function (n, list) {
 		return A3($elm$core$List$takeFast, 0, n, list);
 	});
-var $author$project$Creator$removeInput = function (preparation) {
+var $author$project$Recipe$removeGroup = function (section) {
+	var length = $elm$core$List$length(section);
+	return (length > 1) ? A2($elm$core$List$take, length - 1, section) : section;
+};
+var $author$project$Recipe$removeGroupInput = function (group) {
+	var length = $elm$core$List$length(group.list);
 	return _Utils_update(
-		preparation,
+		group,
 		{
-			list: ($elm$core$List$length(preparation.list) > 1) ? A2(
-				$elm$core$List$take,
-				$elm$core$List$length(preparation.list) - 1,
-				preparation.list) : preparation.list
+			list: function () {
+				var _v0 = length > 1;
+				if (_v0) {
+					return A2($elm$core$List$take, length - 1, group.list);
+				} else {
+					return group.list;
+				}
+			}()
 		});
 };
-var $author$project$Creator$updateInputs = F3(
-	function (index, input, prep) {
-		var prepInput = A2(
+var $author$project$Recipe$removeInput = F2(
+	function (section, _v0) {
+		var groupIndex = _v0.groupIndex;
+		var listIndex = _v0.listIndex;
+		return A3(
+			$author$project$Utils$targetMap,
+			section,
+			groupIndex,
+			function (group) {
+				return $author$project$Recipe$removeGroupInput(group);
+			});
+	});
+var $author$project$Utils$replace = F3(
+	function (list, targetIndex, value) {
+		return A2(
 			$elm$core$List$indexedMap,
 			F2(
-				function (i, el) {
-					return _Utils_eq(i, index) ? input : el;
+				function (index, el) {
+					return _Utils_eq(index, targetIndex) ? value : el;
 				}),
-			prep.list);
-		return {list: prepInput, title: prep.title};
+			list);
+	});
+var $author$project$Recipe$updateGroup = F3(
+	function (group, targetIndex, value) {
+		return _Utils_update(
+			group,
+			{
+				list: A3($author$project$Utils$replace, group.list, targetIndex, value)
+			});
+	});
+var $author$project$Recipe$updateSection = F3(
+	function (section, input, _v0) {
+		var groupIndex = _v0.groupIndex;
+		var listIndex = _v0.listIndex;
+		return A3(
+			$author$project$Utils$targetMap,
+			section,
+			groupIndex,
+			function (group) {
+				return A3($author$project$Recipe$updateGroup, group, listIndex, input);
+			});
 	});
 var $author$project$Creator$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
 			case 'GotPreparationInput':
-				var index = msg.a;
+				var selector = msg.a;
 				var input = msg.b;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
 						{
-							preparation: A3($author$project$Creator$updateInputs, index, input, model.preparation)
+							preparation: A3($author$project$Recipe$updateSection, model.preparation, input, selector)
 						}),
 					$elm$core$Platform$Cmd$none);
 			case 'AddPreparationField':
+				var index = msg.a;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
 						{
-							preparation: $author$project$Creator$addInput(model.preparation)
+							preparation: A3(
+								$author$project$Recipe$addInput,
+								model.preparation,
+								{groupIndex: index, listIndex: -1},
+								'empty')
+						}),
+					$elm$core$Platform$Cmd$none);
+			case 'RemovePreparationField':
+				var index = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							preparation: A2(
+								$author$project$Recipe$removeInput,
+								model.preparation,
+								{groupIndex: index, listIndex: -1})
+						}),
+					$elm$core$Platform$Cmd$none);
+			case 'AddGroup':
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							preparation: A2(
+								$author$project$Recipe$addGroup,
+								model.preparation,
+								_List_fromArray(
+									['New Group Placeholder']))
 						}),
 					$elm$core$Platform$Cmd$none);
 			default:
@@ -5368,14 +5474,21 @@ var $author$project$Creator$update = F2(
 					_Utils_update(
 						model,
 						{
-							preparation: $author$project$Creator$removeInput(model.preparation)
+							preparation: $author$project$Recipe$removeGroup(model.preparation)
 						}),
 					$elm$core$Platform$Cmd$none);
 		}
 	});
-var $author$project$Creator$AddPreparationField = {$: 'AddPreparationField'};
-var $author$project$Creator$RemovePreparationField = {$: 'RemovePreparationField'};
+var $author$project$Creator$AddGroup = {$: 'AddGroup'};
+var $author$project$Creator$RemoveGroup = {$: 'RemoveGroup'};
 var $elm$html$Html$button = _VirtualDom_node('button');
+var $author$project$Creator$AddPreparationField = function (a) {
+	return {$: 'AddPreparationField', a: a};
+};
+var $author$project$Creator$RemovePreparationField = function (a) {
+	return {$: 'RemovePreparationField', a: a};
+};
+var $elm$html$Html$div = _VirtualDom_node('div');
 var $elm$html$Html$fieldset = _VirtualDom_node('fieldset');
 var $author$project$Creator$GotPreparationInput = F2(
 	function (a, b) {
@@ -5428,7 +5541,7 @@ var $elm$html$Html$Attributes$placeholder = $elm$html$Html$Attributes$stringProp
 var $elm$html$Html$Attributes$type_ = $elm$html$Html$Attributes$stringProperty('type');
 var $elm$html$Html$Attributes$value = $elm$html$Html$Attributes$stringProperty('value');
 var $author$project$Creator$inputField = F2(
-	function (position, currValue) {
+	function (selector, currValue) {
 		return A2(
 			$elm$html$Html$input,
 			_List_fromArray(
@@ -5437,52 +5550,11 @@ var $author$project$Creator$inputField = F2(
 					$elm$html$Html$Attributes$placeholder('Placeholder Text'),
 					$elm$html$Html$Attributes$value(currValue),
 					$elm$html$Html$Events$onInput(
-					$author$project$Creator$GotPreparationInput(position))
+					$author$project$Creator$GotPreparationInput(selector))
 				]),
 			_List_Nil);
 	});
 var $elm$html$Html$legend = _VirtualDom_node('legend');
-var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
-var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
-var $author$project$Creator$createInputFields = function (currentInput) {
-	var inputFields = A2(
-		$elm$core$List$indexedMap,
-		F2(
-			function (i, el) {
-				return A2($author$project$Creator$inputField, i, el);
-			}),
-		currentInput);
-	var content = A2(
-		$elm$core$List$cons,
-		A2(
-			$elm$html$Html$legend,
-			_List_Nil,
-			_List_fromArray(
-				[
-					$elm$html$Html$text('Placeholder')
-				])),
-		inputFields);
-	return A2($elm$html$Html$fieldset, _List_Nil, content);
-};
-var $elm$html$Html$p = _VirtualDom_node('p');
-var $author$project$Creator$outputField = function (input) {
-	return A2(
-		$elm$html$Html$p,
-		_List_Nil,
-		_List_fromArray(
-			[
-				$elm$html$Html$text(input)
-			]));
-};
-var $author$project$Creator$createOutputFields = function (currentInputs) {
-	return A2(
-		$elm$core$List$map,
-		function (el) {
-			return $author$project$Creator$outputField(el);
-		},
-		currentInputs);
-};
-var $elm$html$Html$div = _VirtualDom_node('div');
 var $elm$virtual_dom$VirtualDom$Normal = function (a) {
 	return {$: 'Normal', a: a};
 };
@@ -5499,47 +5571,119 @@ var $elm$html$Html$Events$onClick = function (msg) {
 		'click',
 		$elm$json$Json$Decode$succeed(msg));
 };
+var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
+var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
+var $author$project$Creator$createGroupInputs = F2(
+	function (group, groupIndex) {
+		var inputFields = A2(
+			$elm$core$List$indexedMap,
+			F2(
+				function (listIndex, el) {
+					return A2(
+						$author$project$Creator$inputField,
+						{groupIndex: groupIndex, listIndex: listIndex},
+						el);
+				}),
+			group.list);
+		var content = A2(
+			$elm$core$List$cons,
+			A2(
+				$elm$html$Html$legend,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text(group.title)
+					])),
+			inputFields);
+		var buttons = _List_fromArray(
+			[
+				A2(
+				$elm$html$Html$button,
+				_List_fromArray(
+					[
+						$elm$html$Html$Events$onClick(
+						$author$project$Creator$AddPreparationField(groupIndex))
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text('Add Input')
+					])),
+				A2(
+				$elm$html$Html$button,
+				_List_fromArray(
+					[
+						$elm$html$Html$Events$onClick(
+						$author$project$Creator$RemovePreparationField(groupIndex))
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text('Remove Input')
+					]))
+			]);
+		return A2(
+			$elm$html$Html$fieldset,
+			_List_Nil,
+			_List_fromArray(
+				[
+					A2($elm$html$Html$div, _List_Nil, content),
+					A2($elm$html$Html$div, _List_Nil, buttons)
+				]));
+	});
+var $author$project$Creator$createInputFields = function (section) {
+	var groups = A2(
+		$elm$core$List$indexedMap,
+		F2(
+			function (groupIndex, group) {
+				return A2($author$project$Creator$createGroupInputs, group, groupIndex);
+			}),
+		section);
+	var content = A2(
+		$elm$core$List$cons,
+		A2(
+			$elm$html$Html$legend,
+			_List_Nil,
+			_List_fromArray(
+				[
+					$elm$html$Html$text('Section Placeholder')
+				])),
+		groups);
+	var buttons = _List_fromArray(
+		[
+			A2(
+			$elm$html$Html$button,
+			_List_fromArray(
+				[
+					$elm$html$Html$Events$onClick($author$project$Creator$AddGroup)
+				]),
+			_List_fromArray(
+				[
+					$elm$html$Html$text('Add a Group')
+				])),
+			A2(
+			$elm$html$Html$button,
+			_List_fromArray(
+				[
+					$elm$html$Html$Events$onClick($author$project$Creator$RemoveGroup)
+				]),
+			_List_fromArray(
+				[
+					$elm$html$Html$text('Remove a Group')
+				]))
+		]);
+	return A2(
+		$elm$html$Html$fieldset,
+		_List_Nil,
+		_List_fromArray(
+			[
+				A2($elm$html$Html$div, _List_Nil, content),
+				A2($elm$html$Html$div, _List_Nil, buttons)
+			]));
+};
 var $author$project$Creator$view = function (model) {
 	return {
 		body: _List_fromArray(
 			[
-				A2(
-				$elm$html$Html$div,
-				_List_Nil,
-				_List_fromArray(
-					[
-						A2(
-						$elm$html$Html$button,
-						_List_fromArray(
-							[
-								$elm$html$Html$Events$onClick($author$project$Creator$AddPreparationField)
-							]),
-						_List_fromArray(
-							[
-								$elm$html$Html$text('Add Input')
-							])),
-						A2(
-						$elm$html$Html$button,
-						_List_fromArray(
-							[
-								$elm$html$Html$Events$onClick($author$project$Creator$RemovePreparationField)
-							]),
-						_List_fromArray(
-							[
-								$elm$html$Html$text('Remove Input')
-							]))
-					])),
-				A2(
-				$elm$html$Html$div,
-				_List_Nil,
-				_List_fromArray(
-					[
-						$author$project$Creator$createInputFields(model.preparation.list)
-					])),
-				A2(
-				$elm$html$Html$div,
-				_List_Nil,
-				$author$project$Creator$createOutputFields(model.preparation.list))
+				$author$project$Creator$createInputFields(model.preparation)
 			]),
 		title: 'Recipe Creator'
 	};
