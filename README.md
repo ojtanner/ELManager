@@ -1,43 +1,40 @@
 # Recipe Manager
 
-Elm Frontend and TypeScript (not locked in) Backend
+Should allow you to:
 
-## Data Models
+- Add a recipe
+- Modify a recipe
+- View all recipes
+- View a specific recipe
 
-### Recipes
+## Data Structues
 
-High level overview:
+Not final.
 
-```
-Recipe: {
-    Ingredient-List
-    Preparation
-}
-```
-Ingredients should be either one list of all ingredients or multiple sublists of ingredients for separate parts of the recipe.
+### Recipe Creator
 
-```
-Ingredient-List: {
-    List[Ingredient] | List[List[Ingredient]]
-}
-```
+You have two sections:
 
-A single ingredient is an amount followed by a name. Specifying a specific subset of measurements seems overkill. 
-Example: {"3 Tbsp", "Salt"}
+- Ingredients
+- Preparation
 
-```
-Ingredient: {
-    Amount
-    Name
-}
-```
+Each section is a list of groups.
 
-Preparation is an ordered list of steps.
+A group represents a grouping of related steps.
+
+Example: Ingredients of group "Sauce" are grouped together.
+
+For now Ingredients are not separated by quantity and name.
 
 ```
-Preparation: {
-    List[String]
-}
-```# recipe_namager
-# recipe_namager
-# recipe_namager
+type Section = List Group
+
+type Group =
+    { title : String
+    , list : List String
+    }
+```
+
+### Recipe
+
+A recipe should have various meta-information fields. TODO.
