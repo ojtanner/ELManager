@@ -6,7 +6,7 @@ import Html.Attributes exposing (placeholder, type_, value)
 import Html.Events exposing (onClick, onInput)
 import Recipe exposing (..)
 import List
-import Browser exposing (document)
+import Browser
 
 -- Types
 type alias Model =
