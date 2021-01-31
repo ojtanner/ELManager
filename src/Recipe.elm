@@ -10,14 +10,14 @@ type alias Group =
 
 type alias Section = List Group
 
-type alias Preparation = Section
-
-type alias Ingredients = Section
+type SectionType
+    = Ingredients
+    | Preparation
 
 type alias Recipe =
     { title: String
-    , ingredients: Ingredients
-    , preparation: Preparation
+    , ingredients: Section
+    , preparation: Section
     }
 
 type alias Selector =
@@ -25,9 +25,9 @@ type alias Selector =
     , listIndex : Int
     }
 
-addGroup : Section -> List String -> Section
-addGroup section placeholder =
-    List.append section (List.singleton { title = "None", list = placeholder })
+addGroup : Section -> Section
+addGroup section =
+    List.append section (List.singleton { title = "None", list = [""] })
 
 removeGroup : Section -> Section
 removeGroup section =
@@ -50,12 +50,12 @@ updateGroup : Group -> Int -> String -> Group
 updateGroup group targetIndex value =
     { group | list = replace group.list targetIndex value }
 
-addInput : Section -> Selector -> String -> Section
-addInput section { groupIndex } placeholder =
+addInput : Section -> Selector-> Section
+addInput section { groupIndex } =
     targetMap
         section
         groupIndex
-        (\ group -> addGroupInput group placeholder)
+        (\ group -> addGroupInput group "")
 
 addGroupInput : Group -> String -> Group
 addGroupInput group placeholder =
