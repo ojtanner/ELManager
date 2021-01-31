@@ -51,7 +51,7 @@ updateGroup group targetIndex value =
     { group | list = replace group.list targetIndex value }
 
 addInput : Section -> Selector -> String -> Section
-addInput section { groupIndex, listIndex } placeholder =
+addInput section { groupIndex } placeholder =
     targetMap
         section
         groupIndex
@@ -63,7 +63,7 @@ addGroupInput group placeholder =
 
 
 removeInput : Section -> Selector -> Section
-removeInput section { groupIndex, listIndex } =
+removeInput section { groupIndex } =
     targetMap
         section
         groupIndex
