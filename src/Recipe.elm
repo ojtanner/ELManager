@@ -75,9 +75,8 @@ removeGroupInput group =
         length = List.length group.list
     in
     { group | list =
-        case length > 1 of
-            True ->
-                List.take (length - 1) group.list
-            False -> 
-                group.list
+        if length > 1 then
+            List.take (length - 1) group.list
+        else
+            group.list
     }
