@@ -46,6 +46,17 @@ updateSection section input { groupIndex, listIndex } =
         groupIndex
         (\ group -> updateGroup group listIndex input)
 
+updateGroupTitle : Section -> Int -> String -> Section
+updateGroupTitle section groupIndex value =
+    targetMap
+        section
+        groupIndex
+        (\ group -> updateTitle group value) 
+
+updateTitle : Group -> String -> Group
+updateTitle group value =
+    { group | title = value }
+
 updateGroup : Group -> Int -> String -> Group
 updateGroup group targetIndex value =
     { group | list = replace group.list targetIndex value }

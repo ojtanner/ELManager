@@ -22,6 +22,7 @@ type Msg
     | RemoveField SectionType Int
     | AddGroup SectionType
     | RemoveGroup SectionType
+    | GotTitleInput SectionType Int String
 
 
 -- JavaScript Interop
@@ -58,9 +59,18 @@ changeGroupAmountByType  sType fun model =
         Ingredients ->
             { model | ingredients = fun model.ingredients }
 
+updateGroupTitleByType : SectionType -> Model -> String -> Int -> (Section -> Int -> String -> Section) -> Model
+updateGroupTitleByType sectionType model input groupIndex fun =
+    case sectionType of
+        Preparation ->
+            { model | preparation = fun model.preparation groupIndex input }
+
+        Ingredients ->
+            { model | ingredients = fun model.ingredients groupIndex input }
+
 update : Msg -> Model -> ( Model, Cmd msg )
 update msg model =
-    case msg of
+    case Debug.log "msg: " msg of
         GotInput sType selector input ->
             ( updateSectionByType sType model input selector updateSection , Cmd.none )
 
@@ -76,11 +86,11 @@ update msg model =
         RemoveGroup sType ->
             ( changeGroupAmountByType sType removeGroup model, Cmd.none )
 
+        GotTitleInput sectionType groupIndex input ->
+            ( updateGroupTitleByType sectionType model input groupIndex updateGroupTitle, Cmd.none )
+
 
 -- View
-
--- Throws INITIALISATION ERROR
--- Error is located here.
 view : Model -> Document Msg
 view model =
     { title = "Recipe Creator"
@@ -123,7 +133,17 @@ createGroupInputs sType group groupIndex =
             List.indexedMap (\listIndex el ->
                 inputField sType { groupIndex = groupIndex , listIndex = listIndex } el)
                 group.list
-        content = (legend [] [ text group.title ]) :: inputFields
+
+        titleInput =
+            input 
+                [ type_ "text"
+                , placeholder "Group Title"
+                , value group.title
+                , onInput (GotTitleInput sType groupIndex)
+                ]
+                []
+
+        content = titleInput :: inputFields
     in
     fieldset [] 
         [ div [] content
