@@ -15,6 +15,13 @@ type SectionType
     | Preparation
 
 type alias Recipe =
+    {-
+        Metadata Fields:
+            - Reference aka from where did i steal the recipe: Maybe URL
+            - Vegetarian | Vegan | Meat
+            - Tag-list e.g. "sauce", "soup", "main dish"
+            - Maybe ID (None if you create a new recipe, Some ID if you update an existing ID)
+    -}
     { title: String
     , ingredients: Section
     , preparation: Section
