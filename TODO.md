@@ -8,3 +8,8 @@
 [ ] Add functionality to send information to backend
 [ ] Figure out elm-css
 [ ] Style the page
+
+Optional:
+[ ] Convert Preparation Input fields to "textarea" instead of "text"
+[ ] Change Section of type Ingredients to hold (Ingredient of Amount and Name)
+[ ] Overhaul function signatures to make them uniform by some criterion
