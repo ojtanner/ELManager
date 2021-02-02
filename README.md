@@ -41,10 +41,12 @@ A recipe should have various meta-information fields.
 
 Some of those fields are:
 
+```
 - DietType = Vegan | Vegetarian | Meatarian
 - CookingTime = Hours Int | Minutes Int
 - Difficulty = Easy | Advanced | Difficult
 - Reference = None | Online (some Data Structure) | Print (some Data Structure)
 - Tags = List String
+```
 
 Maybe add some pictures as well.
