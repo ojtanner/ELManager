@@ -3,6 +3,7 @@ module Recipe exposing (..)
 import Utils exposing (targetMap, replace)
 import Html exposing (section)
 
+-- Types
 type alias Group =
     { title: String
     , list: List String
@@ -14,15 +15,74 @@ type SectionType
     = Ingredients
     | Preparation
 
+type DietType
+    = Vegan
+    | Vegetarian
+    | Meatarian
+
+dietTypeToString : DietType -> String
+dietTypeToString dietType =
+    case dietType of
+        Vegan -> "Vegan"
+
+        Vegetarian -> "Vegetarian" 
+
+        Meatarian -> "Meatarian"
+
+type CookingTime
+    = Hours Int
+    | Minutes Int
+
+cookingTimeToString : CookingTime -> String
+cookingTimeToString cookingTime =
+    case cookingTime of
+        Hours time ->
+            time
+            |> String.fromInt
+            |> (++) "Hours Placeholder: "
+
+        Minutes time ->
+            time
+            |> String.fromInt
+            |> (++) ("Minutes Placeholder: ")
+
+
+type Difficulty
+    = Easy
+    | Advanced
+    | Complicated
+
+difficultyToString : Difficulty -> String
+difficultyToString difficulty =
+    case difficulty of
+        Easy -> "Easy"
+
+        Advanced -> "Advanced"
+
+        Complicated -> "Complicated"
+
+type Reference
+    = None
+    | Online
+    | Print
+
+referenceToString : Reference -> String
+referenceToString reference =
+    case reference of
+        None -> "None"
+
+        Online -> "Online placeholder"
+
+        Print -> "Print placeholder"
+
+type Identifier = Maybe Int
+
 type alias Recipe =
-    {-
-        Metadata Fields:
-            - Reference aka from where did i steal the recipe: Maybe URL
-            - Vegetarian | Vegan | Meat
-            - Tag-list e.g. "sauce", "soup", "main dish"
-            - Maybe ID (None if you create a new recipe, Some ID if you update an existing ID)
-    -}
     { title: String
+    , dietType: DietType
+    , cookingTime: CookingTime
+    , difficulty: Difficulty
+    , reference: Reference
     , ingredients: Section
     , preparation: Section
     }
@@ -32,6 +92,7 @@ type alias Selector =
     , listIndex : Int
     }
 
+-- Functions
 addGroup : Section -> Section
 addGroup section =
     List.append section (List.singleton { title = "None", list = [""] })
