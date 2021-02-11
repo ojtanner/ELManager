@@ -29,24 +29,6 @@ dietTypeToString dietType =
 
         Meatarian -> "Meatarian"
 
-type CookingTime
-    = Hours Int
-    | Minutes Int
-
-cookingTimeToString : CookingTime -> String
-cookingTimeToString cookingTime =
-    case cookingTime of
-        Hours time ->
-            time
-            |> String.fromInt
-            |> (++) "Hours Placeholder: "
-
-        Minutes time ->
-            time
-            |> String.fromInt
-            |> (++) ("Minutes Placeholder: ")
-
-
 type Difficulty
     = Easy
     | Advanced
@@ -71,18 +53,19 @@ referenceToString reference =
     case reference of
         None -> "None"
 
-        Online -> "Online placeholder"
+        Online -> "Online"
 
-        Print -> "Print placeholder"
+        Print -> "Print"
 
 type Identifier = Maybe Int
 
 type alias Recipe =
     { title: String
     , dietType: DietType
-    , cookingTime: CookingTime
+    , cookingTime: Int
     , difficulty: Difficulty
     , reference: Reference
+    , referenceInput: String
     , ingredients: Section
     , preparation: Section
     }

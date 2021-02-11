@@ -67,11 +67,14 @@ update msg model =
         SelectedDietType dietType ->
             ( { model | dietType = dietType }, Cmd.none )
 
-        SelectedCookingTime cookingTime ->
-            ( { model | cookingTime = cookingTime }, Cmd.none )
-
         SelectedDifficulty difficulty ->
             ( { model | difficulty = difficulty }, Cmd.none )
 
         SelectedReference reference ->
             ( { model | reference = reference }, Cmd.none )
+
+        GotCookingTimeInput time ->
+            ( { model | cookingTime = time }, Cmd.none )
+
+        GotRerefenceInput input ->
+            ( { model | referenceInput = input }, Cmd.none )

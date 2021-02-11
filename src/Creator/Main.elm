@@ -37,8 +37,9 @@ init _ =
             , title = "Placeholder Recipe Title"
             , dietType = Meatarian
             , difficulty = Easy
-            , cookingTime = Minutes 0
+            , cookingTime = 0
             , reference = None
+            , referenceInput = ""
             }
     in
     ( model

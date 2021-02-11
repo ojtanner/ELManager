@@ -19,17 +19,12 @@ view model =
             }
             SelectedDietType
         , createSelectionButtons
-            { typeList = [(Hours 0), (Minutes 0)]
-            , selected = model.cookingTime
-            , toString = cookingTimeToString
-            }
-            SelectedCookingTime
-        , createSelectionButtons
             { typeList = [Easy, Advanced, Complicated]
             , selected = model.difficulty
             , toString = difficultyToString
             }
             SelectedDifficulty
+        , rerefenceInput model.referenceInput
         , createSelectionButtons
             { typeList = [None, Online, Print]
             , selected = model.reference
@@ -47,6 +42,30 @@ type alias SelectADT a =
     , toString : (a -> String)
     }
 
+cookingTimeInput : Int -> Html Msg
+cookingTimeInput currentTime =
+    div
+        []
+        [ input
+            [ type_ "number"
+            , onInput (GotCookingTimeInput << Maybe.withDefault 1 << String.toInt)
+            , value (String.fromInt currentTime)
+            ]
+            []
+        ]
+
+rerefenceInput : String -> Html Msg
+rerefenceInput currentValue =
+    div
+        []
+        [ input
+            [ type_ "text"
+            , onInput GotRerefenceInput
+            , value currentValue
+            ]
+            []
+        ]
+
 createSelectionButtons : SelectADT a -> (a -> Msg) -> Html Msg
 createSelectionButtons { typeList, selected, toString } message =
     div
@@ -55,7 +74,6 @@ createSelectionButtons { typeList, selected, toString } message =
             (\el ->
                 msgButton el selected (toString el) message)
             typeList
-
 
 msgButton : a -> a -> String -> (a -> Msg) -> Html Msg
 msgButton a currentA strOfA message =
@@ -78,15 +96,20 @@ createInputFields sType section =
                     createGroupInputs sType group groupIndex)
                 section
 
+        sectionTitle =
+            case sType of
+                Preparation -> "Preparation"
+
+                Ingredients -> "Ingredients"
+
         content =
-            (legend [] [ text "Section Placeholder" ]) :: groups
+            (legend [] [ text sectionTitle ]) :: groups
     in
     fieldset []
         [ div [] content
         , div [] buttons
         ]
 
--- its not the buttons
 createGroupInputs : SectionType -> Group -> Int -> Html Msg
 createGroupInputs sType group groupIndex =
     let

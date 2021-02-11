@@ -12,6 +12,7 @@ type Msg
     | RemoveGroup SectionType
     | GotTitleInput SectionType Int String
     | SelectedDietType DietType
-    | SelectedCookingTime CookingTime
     | SelectedDifficulty Difficulty
     | SelectedReference Reference
+    | GotCookingTimeInput Int
+    | GotRerefenceInput String
