@@ -12,25 +12,34 @@ view : Model -> Document Msg
 view model =
     { title = "Recipe Creator"
     , body =
-        [ createSelectionButtons
-            { typeList = [Meatarian, Vegetarian, Vegan]
-            , selected = model.dietType
-            , toString = dietTypeToString
-            }
-            SelectedDietType
-        , createSelectionButtons
-            { typeList = [Easy, Advanced, Complicated]
-            , selected = model.difficulty
-            , toString = difficultyToString
-            }
-            SelectedDifficulty
-        , rerefenceInput model.referenceInput
-        , createSelectionButtons
-            { typeList = [None, Online, Print]
-            , selected = model.reference
-            , toString = referenceToString
-            }
-            SelectedReference
+        [ wrapper
+            (createSelectionButtons
+                { typeList = [Meatarian, Vegetarian, Vegan]
+                , selected = model.dietType
+                , toString = dietTypeToString
+                }
+                SelectedDietType)
+            "Select the Diet Type:"
+
+        , wrapper 
+            (createSelectionButtons
+                { typeList = [Easy, Advanced, Complicated]
+                , selected = model.difficulty
+                , toString = difficultyToString
+                }
+                SelectedDifficulty)
+            "Select the Difficulty:"
+        , wrapper
+            (rerefenceInput model.referenceInput)
+            "Add the Reference:"
+        , wrapper
+            (createSelectionButtons
+                { typeList = [None, Online, Print]
+                , selected = model.reference
+                , toString = referenceToString
+                }
+                SelectedReference)
+            "Select  the Reference Type:"
         , createInputFields Preparation model.preparation
         , createInputFields Ingredients model.ingredients 
         ]
@@ -41,6 +50,14 @@ type alias SelectADT a =
     , selected : a
     , toString : (a -> String)
     }
+
+wrapper : Html msg -> String -> Html msg
+wrapper wrappee title =
+    div
+        []
+        [ h2 [] [ text title ]
+        , wrappee
+        ]
 
 cookingTimeInput : Int -> Html Msg
 cookingTimeInput currentTime =
