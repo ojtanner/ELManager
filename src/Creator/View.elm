@@ -64,7 +64,9 @@ type alias SelectADT a =
 wrapper : Html msg -> String -> Html msg
 wrapper wrappee title =
     div
-        [
+        [ css 
+            [ backgroundColor (rgb 255 255 0)
+            ]
         ]
         [ h2 [] [ text title ]
         , wrappee
