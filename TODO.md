@@ -4,7 +4,8 @@
 [x] Create Inputfield Section
 [x] Handle two sections at once
 [x] Add input to change each group title
-[ ] Add metadata input fields (time, dificulty, reference, etc.)
+[x] Add metadata input fields (time, dificulty, reference, etc.)
+[ ] Add / remove text input field for Reference when needed.
 [ ] Add functionality to send information to backend
 [ ] Figure out elm-css
 [ ] Style the page
