@@ -3,46 +3,56 @@ module Creator.View exposing (..)
 import Creator.Types exposing (..)
 import Recipe exposing (..)
 import Browser exposing (Document)
-import Html exposing (..)
-import Html.Attributes exposing (placeholder, type_, value, selected)
-import Html.Events exposing (onClick, onInput)
-import Dict exposing (diff)
+import Css exposing (..)
+import Html
+import Html.Styled exposing (..)
+import Html.Styled.Attributes exposing (..)
+import Html.Styled.Events exposing (..)
 
+{-|
+Convert Body from Html to Html.Styled: https://www.reddit.com/r/elm/comments/9e4qcu/is_elmcss_compatible_with_browserdocument/ 
+-}
 view : Model -> Document Msg
 view model =
-    { title = "Recipe Creator"
-    , body =
-        [ wrapper
-            (createSelectionButtons
-                { typeList = [Meatarian, Vegetarian, Vegan]
-                , selected = model.dietType
-                , toString = dietTypeToString
-                }
-                SelectedDietType)
-            "Select the Diet Type:"
+    let
+       body = 
+        Html.Styled.div
+            []
+            [ wrapper
+                (createSelectionButtons
+                    { typeList = [Meatarian, Vegetarian, Vegan]
+                    , selected = model.dietType
+                    , toString = dietTypeToString
+                    }
+                    SelectedDietType)
+                "Select the Diet Type:"
 
-        , wrapper 
-            (createSelectionButtons
-                { typeList = [Easy, Advanced, Complicated]
-                , selected = model.difficulty
-                , toString = difficultyToString
-                }
-                SelectedDifficulty)
-            "Select the Difficulty:"
-        , wrapper
-            (rerefenceInput model.referenceInput)
-            "Add the Reference:"
-        , wrapper
-            (createSelectionButtons
-                { typeList = [None, Online, Print]
-                , selected = model.reference
-                , toString = referenceToString
-                }
-                SelectedReference)
-            "Select  the Reference Type:"
-        , createInputFields Preparation model.preparation
-        , createInputFields Ingredients model.ingredients 
-        ]
+            , wrapper 
+                (createSelectionButtons
+                    { typeList = [Easy, Advanced, Complicated]
+                    , selected = model.difficulty
+                    , toString = difficultyToString
+                    }
+                    SelectedDifficulty)
+                "Select the Difficulty:"
+            , wrapper
+                (rerefenceInput model.referenceInput)
+                "Add the Reference:"
+            , wrapper
+                (createSelectionButtons
+                    { typeList = [None, Online, Print]
+                    , selected = model.reference
+                    , toString = referenceToString
+                    }
+                    SelectedReference)
+                "Select  the Reference Type:"
+            , createInputFields Preparation model.preparation
+            , createInputFields Ingredients model.ingredients 
+            ]
+    in
+    
+    { title = "Recipe Creator"
+    , body = [ Html.Styled.toUnstyled body]
     }
 
 type alias SelectADT a =
@@ -54,7 +64,8 @@ type alias SelectADT a =
 wrapper : Html msg -> String -> Html msg
 wrapper wrappee title =
     div
-        []
+        [
+        ]
         [ h2 [] [ text title ]
         , wrappee
         ]
