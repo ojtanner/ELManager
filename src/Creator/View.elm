@@ -24,7 +24,6 @@ view model =
                     }
                     SelectedDietType)
                 "Select the Diet Type:"
-
             , wrapper 
                 (createSelectionButtons
                     { typeList = [Easy, Advanced, Complicated]
@@ -43,7 +42,7 @@ view model =
                     "Select the Cooking Time Unit:"
             , wrapper
                 (cookingTimeInput model.cookingTime)
-                "Add the Cooking Time in Hours:"
+                "Add the Cooking Time:"
             , wrapper
                 (createSelectionButtons
                     { typeList = [None, Online, Print]
