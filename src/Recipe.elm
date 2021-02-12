@@ -44,14 +44,14 @@ difficultyToString difficulty =
         Complicated -> "Complicated"
 
 type Reference
-    = None
+    = NoReference
     | Online
     | Print
 
 referenceToString : Reference -> String
 referenceToString reference =
     case reference of
-        None -> "None"
+        NoReference -> "No Reference"
 
         Online -> "Online"
 
@@ -68,8 +68,6 @@ cookingTimeToString cookingTime =
 
         Hours -> "Hours"
 
-type Identifier = Maybe Int
-
 type alias Recipe =
     { title: String
     , dietType: DietType
@@ -80,6 +78,7 @@ type alias Recipe =
     , referenceInput: String
     , ingredients: Section
     , preparation: Section
+    , id: Maybe Int
     }
 
 type alias Selector =

@@ -45,7 +45,7 @@ view model =
                 "Add the Cooking Time:"
             , wrapper
                 (createSelectionButtons
-                    { typeList = [None, Online, Print]
+                    { typeList = [NoReference, Online, Print]
                     , selected = model.referenceType
                     , toString = referenceToString
                     }
@@ -88,7 +88,7 @@ toggleWrapper wrappee title isVisible =
 refTypeToBool : Reference -> Bool
 refTypeToBool refType =
     case refType of
-        None -> False
+        NoReference -> False
 
         Online -> True
 
@@ -120,7 +120,7 @@ rerefenceInput refType currentValue =
 
         refInput =
             case refType of
-                None ->
+                NoReference ->
                     []
                 
                 Online ->

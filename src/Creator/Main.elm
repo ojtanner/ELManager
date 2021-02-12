@@ -39,8 +39,9 @@ init _ =
             , difficulty = Easy
             , cookingTime = 0
             , cookingTimeUnit = Minutes
-            , referenceType = None
+            , referenceType = NoReference
             , referenceInput = ""
+            , id = Nothing
             }
     in
     ( model
