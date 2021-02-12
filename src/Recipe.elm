@@ -57,14 +57,26 @@ referenceToString reference =
 
         Print -> "Print"
 
+type CookingTime
+    = Minutes
+    | Hours
+
+cookingTimeToString : CookingTime -> String
+cookingTimeToString cookingTime =
+    case cookingTime of
+        Minutes -> "Minutes"
+
+        Hours -> "Hours"
+
 type Identifier = Maybe Int
 
 type alias Recipe =
     { title: String
     , dietType: DietType
     , cookingTime: Int
+    , cookingTimeUnit: CookingTime
     , difficulty: Difficulty
-    , reference: Reference
+    , referenceType: Reference
     , referenceInput: String
     , ingredients: Section
     , preparation: Section

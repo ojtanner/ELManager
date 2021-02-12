@@ -38,7 +38,8 @@ init _ =
             , dietType = Meatarian
             , difficulty = Easy
             , cookingTime = 0
-            , reference = None
+            , cookingTimeUnit = Minutes
+            , referenceType = None
             , referenceInput = ""
             }
     in

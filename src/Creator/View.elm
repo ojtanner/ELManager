@@ -5,9 +5,9 @@ import Recipe exposing (..)
 import Browser exposing (Document)
 import Css exposing (..)
 import Html
-import Html.Styled exposing (..)
-import Html.Styled.Attributes exposing (..)
-import Html.Styled.Events exposing (..)
+import Html exposing (..)
+import Html.Attributes exposing (..)
+import Html.Events exposing (..)
 
 {-|
 Convert Body from Html to Html.Styled: https://www.reddit.com/r/elm/comments/9e4qcu/is_elmcss_compatible_with_browserdocument/ 
@@ -16,8 +16,6 @@ view : Model -> Document Msg
 view model =
     let
        body = 
-        Html.Styled.div
-            []
             [ wrapper
                 (createSelectionButtons
                     { typeList = [Meatarian, Vegetarian, Vegan]
@@ -36,23 +34,35 @@ view model =
                     SelectedDifficulty)
                 "Select the Difficulty:"
             , wrapper
-                (rerefenceInput model.referenceInput)
-                "Add the Reference:"
+                (createSelectionButtons
+                    { typeList = [Minutes, Hours]
+                    , selected = model.cookingTimeUnit
+                    , toString = cookingTimeToString
+                    }
+                    SelectedCookingTimeUnit)
+                    "Select the Cooking Time Unit:"
+            , wrapper
+                (cookingTimeInput model.cookingTime)
+                "Add the Cooking Time in Hours:"
             , wrapper
                 (createSelectionButtons
                     { typeList = [None, Online, Print]
-                    , selected = model.reference
+                    , selected = model.referenceType
                     , toString = referenceToString
                     }
                     SelectedReference)
-                "Select  the Reference Type:"
+                "Select the Reference Type:"
+            , toggleWrapper
+                (rerefenceInput model.referenceType model.referenceInput)
+                "Add the Reference:"
+                (refTypeToBool model.referenceType)
             , createInputFields Preparation model.preparation
             , createInputFields Ingredients model.ingredients 
             ]
     in
     
     { title = "Recipe Creator"
-    , body = [ Html.Styled.toUnstyled body]
+    , body = body
     }
 
 type alias SelectADT a =
@@ -64,13 +74,26 @@ type alias SelectADT a =
 wrapper : Html msg -> String -> Html msg
 wrapper wrappee title =
     div
-        [ css 
-            [ backgroundColor (rgb 255 255 0)
-            ]
-        ]
+        []
         [ h2 [] [ text title ]
         , wrappee
         ]
+
+toggleWrapper : Html msg -> String -> Bool -> Html msg
+toggleWrapper wrappee title isVisible =
+    if isVisible then
+        wrapper wrappee title
+    else
+        text ""
+
+refTypeToBool : Reference -> Bool
+refTypeToBool refType =
+    case refType of
+        None -> False
+
+        Online -> True
+
+        Print -> True
 
 cookingTimeInput : Int -> Html Msg
 cookingTimeInput currentTime =
@@ -84,17 +107,34 @@ cookingTimeInput currentTime =
             []
         ]
 
-rerefenceInput : String -> Html Msg
-rerefenceInput currentValue =
+rerefenceInput : Reference -> String -> Html Msg
+rerefenceInput refType currentValue =
+    let
+        nonempty =
+            [ input
+                [ type_ "text"
+                , onInput GotRerefenceInput
+                , value currentValue
+                ]
+                []
+            ]
+
+        refInput =
+            case refType of
+                None ->
+                    []
+                
+                Online ->
+                    nonempty
+
+                Print ->
+                    nonempty
+
+    in
+
     div
         []
-        [ input
-            [ type_ "text"
-            , onInput GotRerefenceInput
-            , value currentValue
-            ]
-            []
-        ]
+        refInput
 
 createSelectionButtons : SelectADT a -> (a -> Msg) -> Html Msg
 createSelectionButtons { typeList, selected, toString } message =

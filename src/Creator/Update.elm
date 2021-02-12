@@ -71,7 +71,10 @@ update msg model =
             ( { model | difficulty = difficulty }, Cmd.none )
 
         SelectedReference reference ->
-            ( { model | reference = reference }, Cmd.none )
+            ( { model | referenceType = reference }, Cmd.none )
+
+        SelectedCookingTimeUnit unit ->
+            ( { model | cookingTimeUnit = unit }, Cmd.none )
 
         GotCookingTimeInput time ->
             ( { model | cookingTime = time }, Cmd.none )
