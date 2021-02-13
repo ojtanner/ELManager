@@ -81,3 +81,6 @@ update msg model =
 
         GotRerefenceInput input ->
             ( { model | referenceInput = input }, Cmd.none )
+
+        GotRecipeTitleInput input ->
+            ( { model | title = input }, Cmd.none )

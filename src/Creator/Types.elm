@@ -17,3 +17,4 @@ type Msg
     | SelectedCookingTimeUnit CookingTime
     | GotCookingTimeInput Int
     | GotRerefenceInput String
+    | GotRecipeTitleInput String

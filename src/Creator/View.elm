@@ -3,7 +3,6 @@ module Creator.View exposing (..)
 import Creator.Types exposing (..)
 import Recipe exposing (..)
 import Browser exposing (Document)
-import Css exposing (..)
 import Html
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -17,6 +16,9 @@ view model =
     let
        body = 
             [ wrapper
+                (titleInput model.title)
+                "Add the Recipe Title:"
+            , wrapper
                 (createSelectionButtons
                     { typeList = [Meatarian, Vegetarian, Vegan]
                     , selected = model.dietType
@@ -84,6 +86,18 @@ toggleWrapper wrappee title isVisible =
         wrapper wrappee title
     else
         text ""
+
+titleInput : String -> Html Msg
+titleInput currentValue =
+    div
+        []
+        [ input
+            [ type_ "text"
+            , onInput GotRecipeTitleInput
+            , value currentValue
+            ]
+            []
+        ]
 
 refTypeToBool : Reference -> Bool
 refTypeToBool refType =
@@ -191,7 +205,7 @@ createGroupInputs sType group groupIndex =
                 inputField sType { groupIndex = groupIndex , listIndex = listIndex } el)
                 group.list
 
-        titleInput =
+        title =
             input 
                 [ type_ "text"
                 , placeholder "Group Title"
@@ -200,7 +214,7 @@ createGroupInputs sType group groupIndex =
                 ]
                 []
 
-        content = titleInput :: inputFields
+        content = title :: inputFields
     in
     fieldset [] 
         [ div [] content
