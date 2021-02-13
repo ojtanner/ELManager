@@ -7,7 +7,7 @@
 [x] Add metadata input fields (time, dificulty, reference, etc.)
 [x] Add / remove text input field for Reference when needed.
 [ ] Figure out how to add tags
-[ ] Add Recipe Title Input
+[x] Add Recipe Title Input
 [ ] Add functionality to send information to backend
 [-] Figure out elm-css UPDATE: Just use regular Stylesheets
 [ ] Style the page
