@@ -8,6 +8,7 @@
 [x] Add / remove text input field for Reference when needed.
 [ ] Figure out how to add tags
 [x] Add Recipe Title Input
+[ ] Add Validation And Error Messages
 [ ] Add functionality to send information to backend
 [-] Figure out elm-css UPDATE: Just use regular Stylesheets
 [ ] Style the page
