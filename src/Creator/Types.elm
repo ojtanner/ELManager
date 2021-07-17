@@ -14,7 +14,6 @@ type Msg
     | SelectedDietType DietType
     | SelectedDifficulty Difficulty
     | SelectedReference Reference
-    | SelectedCookingTimeUnit CookingTime
     | GotCookingTimeInput Int
     | GotRerefenceInput String
     | GotRecipeTitleInput String

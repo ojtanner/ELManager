@@ -49,11 +49,11 @@ update msg model =
         GotInput sType selector input ->
             ( updateSectionByType sType model input selector updateSection , Cmd.none )
 
-        AddField sType index ->
-            ( changeFieldAmountByType sType addInput model { groupIndex = index, listIndex = -1 }, Cmd.none )
+        AddField sType groupIndex ->
+            ( changeFieldAmountByType sType addInput model { groupIndex = groupIndex, listIndex = -1 }, Cmd.none )
 
-        RemoveField sType index ->
-            ( changeFieldAmountByType sType removeInput model { groupIndex = index, listIndex = -1 }, Cmd.none )
+        RemoveField sType groupIndex ->
+            ( changeFieldAmountByType sType removeInput model { groupIndex = groupIndex, listIndex = -1 }, Cmd.none )
         
         AddGroup sType ->
             ( changeGroupAmountByType sType addGroup model, Cmd.none )
@@ -72,9 +72,6 @@ update msg model =
 
         SelectedReference reference ->
             ( { model | referenceType = reference }, Cmd.none )
-
-        SelectedCookingTimeUnit unit ->
-            ( { model | cookingTimeUnit = unit }, Cmd.none )
 
         GotCookingTimeInput time ->
             ( { model | cookingTime = time }, Cmd.none )

@@ -3,7 +3,6 @@ module Creator.View exposing (..)
 import Creator.Types exposing (..)
 import Recipe exposing (..)
 import Browser exposing (Document)
-import Html
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
@@ -35,16 +34,8 @@ view model =
                     SelectedDifficulty)
                 "Select the Difficulty:"
             , wrapper
-                (createSelectionButtons
-                    { typeList = [Minutes, Hours]
-                    , selected = model.cookingTimeUnit
-                    , toString = cookingTimeToString
-                    }
-                    SelectedCookingTimeUnit)
-                    "Select the Cooking Time Unit:"
-            , wrapper
                 (cookingTimeInput model.cookingTime)
-                "Add the Cooking Time:"
+                "Add the Cooking Time in Minutes:"
             , wrapper
                 (createSelectionButtons
                     { typeList = [NoReference, Online, Print]
