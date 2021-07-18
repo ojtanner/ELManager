@@ -46,8 +46,11 @@ updateGroupTitleByType sectionType model input groupIndex fun =
 update : Msg -> Model -> ( Model, Cmd msg )
 update msg model =
     case Debug.log "msg: " msg of
-        GotInput sType selector input ->
-            ( updateSectionByType sType model input selector updateSection , Cmd.none )
+        GotPreparationInput selector input ->
+            ( updateSectionByType Preparation model input selector updateSection , Cmd.none )
+
+        GotIngredientsInput selector input ->
+            ( updateSectionByType Ingredients model input selector updateSection , Cmd.none )
 
         AddField sType groupIndex ->
             ( changeFieldAmountByType sType addInput model { groupIndex = groupIndex, listIndex = -1 }, Cmd.none )

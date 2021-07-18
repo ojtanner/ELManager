@@ -5,7 +5,8 @@ import Recipe exposing (..)
 type alias Model = Recipe
 
 type Msg
-    = GotInput SectionType Selector String
+    = GotPreparationInput Selector String
+    | GotIngredientsInput Selector String
     | AddField SectionType Int
     | RemoveField SectionType Int
     | AddGroup SectionType

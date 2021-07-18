@@ -214,4 +214,14 @@ createGroupInputs sType group groupIndex =
 
 inputField : SectionType -> Selector -> String -> Html Msg
 inputField sType selector currValue =
-    input [ type_ "text", placeholder "Placeholder Text", value currValue, onInput (GotInput sType selector) ] []
+    let
+        constructor =
+            case sType of
+                Preparation -> GotPreparationInput
+
+                Ingredients -> GotIngredientsInput
+    in
+    input [ type_ "text"
+          , placeholder "Placeholder Text"
+          , value currValue
+          , onInput (constructor selector) ] []

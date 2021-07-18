@@ -111,7 +111,7 @@ updateGroup : Group -> Int -> String -> Group
 updateGroup group targetIndex value =
     { group | list = replace group.list targetIndex value }
 
-addInput : Section -> Selector-> Section
+addInput : Section -> Selector -> Section
 addInput section { groupIndex } =
     targetMap
         section
